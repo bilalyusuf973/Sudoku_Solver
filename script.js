@@ -1,9 +1,8 @@
 var arr = [[], [], [], [], [], [], [], [], []]
 
-for (var i = 0; i < 9; i++) {
-	for (var j = 0; j < 9; j++) {
+for (let i = 0; i < 9; i++) {
+	for (let j = 0; j < 9; j++) {
 		arr[i][j] = document.getElementById(i * 9 + j);
-
 	}
 }
 
@@ -11,14 +10,14 @@ for (var i = 0; i < 9; i++) {
 var board = [[], [], [], [], [], [], [], [], []]
 
 function FillBoard(board) {
-	for (var i = 0; i < 9; i++) {
-		for (var j = 0; j < 9; j++) {
+	for (let i = 0; i < 9; i++) {
+		for (let j = 0; j < 9; j++) {
 			if (board[i][j] != 0) {
-				arr[i][j].innerText = board[i][j]
+				arr[i][j].value = board[i][j];
 			}
 
 			else
-				arr[i][j].innerText = ''
+				arr[i][j].value = ''
 		}
 	}
 }
@@ -26,17 +25,14 @@ function FillBoard(board) {
 let GetPuzzle = document.getElementById('GetPuzzle')
 let SolvePuzzle = document.getElementById('SolvePuzzle')
 
-GetPuzzle.onclick = function () {
-	var xhrRequest = new XMLHttpRequest()
-	xhrRequest.onload = function () {
-		var response = JSON.parse(xhrRequest.response)
-		board = response.board
-		FillBoard(board)
-	}
-	xhrRequest.open('get', 'https://sugoku.herokuapp.com/board?difficulty=easy')
-	//we can change the difficulty of the puzzle the allowed values of difficulty are easy, medium, hard and random
-	xhrRequest.send()
+GetPuzzle.onclick = async () => {
+	const response = await fetch('https://sugoku.herokuapp.com/board?' + new URLSearchParams({difficulty:'hard'}));
+
+	const data = await response.json();
+	board = data.board;
+	FillBoard(board);
 }
+
 
 function isSafe(row, col, board, val){
         
