@@ -30,7 +30,6 @@ GetPuzzle.onclick = function () {
 	var xhrRequest = new XMLHttpRequest()
 	xhrRequest.onload = function () {
 		var response = JSON.parse(xhrRequest.response)
-		console.log(response)
 		board = response.board
 		FillBoard(board)
 	}
@@ -39,10 +38,63 @@ GetPuzzle.onclick = function () {
 	xhrRequest.send()
 }
 
+function isSafe(row, col, board, val){
+        
+	for(let i=0; i<9; i++){
+		if(board[row][i] == val){
+			return false;
+		}
+		
+		if(board[i][col] == val){
+			return false;
+		}
+
+		if(board[(3*Math.floor(row/3)) + Math.floor(i/3)][(3*Math.floor(col/3) + (i%3))] == val){
+			return false;
+		}
+	}
+	
+	return true;
+	
+}
+
+
+function solve(board, row, col, n){
+	if(row == n){
+		return true;
+	}
+
+	if(col == n){
+		return solve(board, row+1, 0, n);
+	}
+
+	if(board[row][col] != 0){
+		return solve(board, row, col+1, n);
+	}
+
+	for(let val=1; val<=9; val++){
+
+		if(isSafe(row, col, board, val)){
+			
+			board[row][col] = val;
+
+			FillBoard(board);
+
+			let nextSolution = solve(board, row, col+1, n);
+
+			if(nextSolution){
+				return true;
+			}
+			else{
+				board[row][col] = 0;
+			}
+		}
+	}
+	return false;
+}
+
 SolvePuzzle.onclick = () => {
-	SudokuSolver(board, 0, 0, 9);
+	solve(board, 0, 0, 9);
 };
 
-function SudokuSolver(board, i, j, n) {
-	// Write your Code here
-}
+
