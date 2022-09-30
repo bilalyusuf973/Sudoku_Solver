@@ -1,3 +1,19 @@
+let gridWidth = document.getElementById("grid_sudoku").clientWidth;
+if(gridWidth < 549){
+	var x = document.querySelectorAll(".size");
+    for(var i = 0; i < x.length; i++) {    
+        x[i].style.width = `${gridWidth/10 + 2 }px`;
+        x[i].style.height = `${gridWidth/10 + 2 }px`;
+    }
+}
+
+else{
+	var x = document.querySelectorAll(".size");
+    for(var i = 0; i < x.length; i++) {    
+        x[i].style.width = `60px`;
+        x[i].style.height = `60px`;
+    }
+}
 var arr = [[], [], [], [], [], [], [], [], []]
 
 for (let i = 0; i < 9; i++) {
@@ -6,10 +22,9 @@ for (let i = 0; i < 9; i++) {
 	}
 }
 
-
 var board = [[], [], [], [], [], [], [], [], []]
 
-function FillBoard(board) {
+function FillBoard1(board) {
 	for (let i = 0; i < 9; i++) {
 		for (let j = 0; j < 9; j++) {
 			if (board[i][j] != 0) {
@@ -22,15 +37,38 @@ function FillBoard(board) {
 	}
 }
 
+function FillBoard2(arr) {
+	for (let i = 0; i < 9; i++) {
+		for (let j = 0; j < 9; j++) {
+			if (arr[i][j].value != '') {
+				board[i][j] = arr[i][j].value;
+			}
+
+			else
+				board[i][j] = 0;
+		}
+	}
+}
+
 let GetPuzzle = document.getElementById('GetPuzzle')
 let SolvePuzzle = document.getElementById('SolvePuzzle')
+let ClearPuzzle = document.getElementById('ClearPuzzle')
 
 GetPuzzle.onclick = async () => {
 	const response = await fetch('https://sugoku.herokuapp.com/board?' + new URLSearchParams({difficulty:'hard'}));
 
 	const data = await response.json();
 	board = data.board;
-	FillBoard(board);
+	FillBoard1(board);
+}
+
+ClearPuzzle.onclick = () => {
+	for (let i = 0; i < 9; i++) {
+		for (let j = 0; j < 9; j++) {
+			arr[i][j].value = '';
+		}
+	}
+	board = [[], [], [], [], [], [], [], [], []]
 }
 
 
@@ -74,7 +112,7 @@ function solve(board, row, col, n){
 			
 			board[row][col] = val;
 
-			FillBoard(board);
+			FillBoard1(board);
 
 			let nextSolution = solve(board, row, col+1, n);
 
@@ -90,7 +128,16 @@ function solve(board, row, col, n){
 }
 
 SolvePuzzle.onclick = () => {
-	solve(board, 0, 0, 9);
+
+	if(board[0].length == 0){
+		FillBoard2(arr);
+	}
+	
+	let solution = solve(board, 0, 0, 9);
+	if(!solution){
+		alert("Solution for this puzzle is not possible");
+		return;
+	}
 };
 
 
