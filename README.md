@@ -1,3 +1,4 @@
+![sudoku](https://user-images.githubusercontent.com/111658408/193399224-3fc74b66-aa15-4b19-bbd6-ebb4e2c75def.jpg)
 ## Sudoku_Solver
 
 A single page website to play sudoku or to solve sudoku according to the values entered by the user.
